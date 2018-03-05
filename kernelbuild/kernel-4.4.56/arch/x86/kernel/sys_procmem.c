@@ -19,13 +19,13 @@ struct proc_segs {
 };
 
 asmlinkage long sys_procmem(int pid, struct proc_segs* info) {
+      struct task_struct* ts = NULL;
+      struct mm_struct* mm = NULL;
+
       // my student info
       info->mssv = 1611617;
 
       // check if there is a task of pid
-      struct task_struct* ts = NULL;
-      struct mm_struct* mm = NULL;
-
       for_each_process(ts) {
             if (ts->pid == pid) {
                   mm = ts->mm;
@@ -36,8 +36,6 @@ asmlinkage long sys_procmem(int pid, struct proc_segs* info) {
       if (mm == NULL) return -1;
 
       // OK, there is a process
-      // get the mm_struct to view the memory
-      struct mm_struct* mm = ts->mm;
 
       // code
       info->start_code = mm->start_code;
