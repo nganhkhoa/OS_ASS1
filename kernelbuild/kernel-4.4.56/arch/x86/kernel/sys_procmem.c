@@ -24,16 +24,16 @@ asmlinkage long sys_procmem(int pid, struct proc_segs* info) {
 
       // check if there is a task of pid
       struct task_struct* ts = NULL;
-      int match = 0;
+      struct mm_struct* mm = NULL;
 
       for_each_process(ts) {
             if (ts->pid == pid) {
-                  match = 1;
+                  mm = ts->mm;
                   break;
             }
       }
 
-      if (match != 1) return -1;
+      if (mm == NULL) return -1;
 
       // OK, there is a process
       // get the mm_struct to view the memory
@@ -49,7 +49,7 @@ asmlinkage long sys_procmem(int pid, struct proc_segs* info) {
       info->start_heap = mm->start_brk;
       info->end_heap = mm->brk;
       // stack
-      info->start_stack = mm->stack_start;
+      info->start_stack = mm->start_stack;
       // info->end_start = mm->stack_end;
 
       return 0;
